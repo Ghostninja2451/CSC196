@@ -44,8 +44,10 @@ void Game::Update(float dt)
 		}
 		break;
 	case Game::eState::StartGame:
+		scene->AddActor(std::make_unique< Player>(henry::Transform{ henry::Vector2{400, 600}, 0, 3 }, engine->Get<henry::ResourceSystem>()->Get<henry::Shape>("Player.txt"), 500.0f));
 		score = 0;
 		lives = 5;
+		rounds = 1;
 		state = eState::StartLevel;
 		break;
 	case Game::eState::StartLevel:
@@ -55,11 +57,15 @@ void Game::Update(float dt)
 
 		break;
 	case Game::eState::Game:
+		if (scene->GetActors<Enemy>().size() == 0 && scene->GetActors<Enemy2>().size() == 0)
+		{
+			rounds++;
+			state = eState::StartLevel;
+		}
 
-		if (scene->GetActors<Enemy>().size() == 0 && scene->GetActors<Enemy2>().size() == 0 || lives == 0)
+		if (lives == 0)
 		{
 			state = eState::Gameover;
-
 		}
 		break;
 	case Game::eState::Gameover:
@@ -83,7 +89,7 @@ void Game::Draw(Core::Graphics& graphics)
 	{
 	case Game::eState::TitleScreen:
 		graphics.SetColor(henry::Color::cyan);
-		graphics.DrawString(380, 320 + static_cast<int>(std::sin(stateTimer * 6.0f) * 10.0f), "HECTOR");
+		graphics.DrawString(380, 320 + static_cast<int>(std::sin(stateTimer * 6.0f) * 10.0f), "Survive the fight : space edition");
 
 		graphics.SetColor(henry::Color::red);
 		graphics.DrawString(340, 360, "Press Space to Start");
@@ -107,6 +113,7 @@ void Game::Draw(Core::Graphics& graphics)
 	graphics.SetColor(henry::Color::white);
 	graphics.DrawString(30, 20, std::to_string(score).c_str());
 	graphics.DrawString(750, 20, std::to_string(lives).c_str());
+	graphics.DrawString(750, 40, std::to_string(rounds).c_str());
 	scene->Draw(graphics);
 	engine->Draw(graphics);
 }
@@ -122,7 +129,7 @@ void Game::UpdateTitle(float dt)
 
 void Game::UpdateLevelStart(float dt)
 {
-	scene->AddActor(std::make_unique< Player>(henry::Transform{ henry::Vector2{400, 600}, 0, 3 }, engine->Get<henry::ResourceSystem>()->Get<henry::Shape>("Player.txt"), 500.0f));
+
 	for (size_t i = 0; i < henry::RandomRange(2.0f , 7.0f); i++)
 	{
 		scene->AddActor(std::make_unique <Enemy>(henry::Transform{ henry::Vector2{ henry::RandomRange(0.0f,800), henry::RandomRange(0.0f,600)}, henry::RandomRange(0, henry::TwoPi), 2 }, engine->Get<henry::ResourceSystem>()->Get<henry::Shape>("Enemy.txt"), 100.0f));

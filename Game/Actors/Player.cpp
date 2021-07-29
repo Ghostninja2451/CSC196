@@ -81,6 +81,7 @@ void Player::Update(float dt)
 }
 	void Player::OnCollision(Actor* actor)
 	{
+		
 
 		if ((dynamic_cast<Projectile*>(actor) && actor->tag == "Enemy") || (dynamic_cast<Enemy2*>(actor)) || (dynamic_cast<Enemy*>(actor)))
 		{

@@ -39,4 +39,5 @@ private:
 
 	size_t score = 0;	
 	size_t lives = 0;
+	size_t rounds = 0;
 };
